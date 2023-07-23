@@ -30,17 +30,16 @@ public class StatService implements IStatService {
     }
 
 
-
     //Клиент = подключение к сервису
     //клиент воруем из прошлого, это тоже самое что гатевай, дто отдельно делаем, ниче никуда не передаем, на ретерне сервиса сначала дто(тут клиент), как то импортируем сбда все эти хуйни, и тьут их вызываем
     @Override
-    public List<HitDto> getHit(Timestamp start, Timestamp end, String uris, Boolean unique ) {
-        if(unique == null) {
+    public List<HitDto> getHit(Timestamp start, Timestamp end, String uris, Boolean unique) {
+        if (unique == null) {
             unique = false;
         }
-       if(unique) {
-           return statRepository.getStats(start.toLocalDateTime(), end.toLocalDateTime(), uris);
-       }
+        if (unique) {
+            return statRepository.getStats(start.toLocalDateTime(), end.toLocalDateTime(), uris);
+        }
         if (uris == null) {
             return statRepository.findByTimeIsAfterAndTimeIsBefore(start.toLocalDateTime(), end.toLocalDateTime()).stream().map(HitMapper::toHitDto).collect(Collectors.toList());
         }
