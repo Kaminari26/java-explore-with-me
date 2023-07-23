@@ -26,7 +26,7 @@ public class StatService implements IStatService {
     @Override
     public void addHit(Hit hit) {
         hit.setTime(LocalDateTime.now());
-        Hit hit1 = statRepository.save(hit);
+        statRepository.save(hit);
     }
 
 
