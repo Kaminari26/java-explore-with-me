@@ -9,13 +9,14 @@ import ru.practicum.repository.StatRepository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class StatService implements IStatService {
     private final StatRepository statRepository;
-    //StatisticClient statisticClient;
 
     @Autowired
     public StatService(StatRepository statRepository) {
@@ -29,9 +30,6 @@ public class StatService implements IStatService {
         statRepository.save(hit);
     }
 
-
-    //Клиент = подключение к сервису
-    //клиент воруем из прошлого, это тоже самое что гатевай, дто отдельно делаем, ниче никуда не передаем, на ретерне сервиса сначала дто(тут клиент), как то импортируем сбда все эти хуйни, и тьут их вызываем
     @Override
     public List<HitDto> getHit(Timestamp start, Timestamp end, String uris, Boolean unique) {
         if (unique == null) {
@@ -41,12 +39,29 @@ public class StatService implements IStatService {
             return statRepository.getStats(start.toLocalDateTime(), end.toLocalDateTime(), uris);
         }
         if (uris == null) {
+
             return statRepository.findByTimeIsAfterAndTimeIsBefore(start.toLocalDateTime(), end.toLocalDateTime()).stream().map(HitMapper::toHitDto).collect(Collectors.toList());
         }
-        return statRepository.findByUriAndTimeIsAfterAndTimeIsBefore(uris, start.toLocalDateTime(), end.toLocalDateTime()).stream().map(HitMapper::toHitDto).collect(Collectors.toList());
-        // return mapper.asdasd(asdasd);
-        // List<Hit> asd = statisticClient.getStats(start,end,unique);
-        //  hits.stream().map(HitMapper :: toHitDto ).collect(Collectors.toList()) ;
+        if (uris.contains(",")) {
+            List<String> listUris = Arrays.stream(uris.split(",")).collect(Collectors.toList());
+            List<HitDto> targerList = new ArrayList<>();
+            for (String str : listUris) {
+                List<HitDto> list = statRepository.findByUriAndTimeIsAfterAndTimeIsBefore(str, start.toLocalDateTime(), end.toLocalDateTime()).stream().map(HitMapper::toHitDto).collect(Collectors.toList());
+                for (HitDto hitDto : list) {
+                    hitDto.setHits((long) list.size());
+                }
 
+                targerList.add(list.get(0));
+            }
+            targerList.sort((d1, d2) -> Math.toIntExact(d2.getHits() - d1.getHits()));
+
+
+            return targerList;
+        }
+        List<HitDto> list = statRepository.findByUriAndTimeIsAfterAndTimeIsBefore(uris, start.toLocalDateTime(), end.toLocalDateTime()).stream().map(HitMapper::toHitDto).collect(Collectors.toList());
+        for (HitDto hitDto : list) {
+            hitDto.setHits((long) list.size());
+        }
+        return list;
     }
 }

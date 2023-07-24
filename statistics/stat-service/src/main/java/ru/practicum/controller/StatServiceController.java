@@ -26,7 +26,7 @@ public class StatServiceController {
 
     @PostMapping("/hit")
     public void createItem(@RequestBody Hit hit) {
-        log.info("asdasdasd {}", hit);
+        log.info("hit {}", hit);
         statService.addHit(hit);
     }
 
