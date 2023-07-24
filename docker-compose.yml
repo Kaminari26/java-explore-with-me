@@ -12,6 +12,7 @@ services:
       - spring.datasource.url=jdbc:postgresql://statistics-db:5432/ewmstats
         - spring.datasource.username=test
         - spring.datasource.password=test
+        - STAT_SERVICE_URL=http://server:9090
 
 
   statistics-db:
