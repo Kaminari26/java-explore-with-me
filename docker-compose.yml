@@ -1,6 +1,6 @@
 version: '3.1'
 services:
-  stats-server:
+  statistics:
     build: statistics/stat-service
     image: statistics
     container_name: statistics
@@ -14,7 +14,7 @@ services:
         - spring.datasource.password=test
 
 
-  stats-db:
+  statistics-db:
     image: postgres:14-alpine
     container_name: statistics-db
     ports:
