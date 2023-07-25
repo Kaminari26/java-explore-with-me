@@ -28,13 +28,14 @@ public class StatServiceController {
     public void createItem(@RequestBody Hit hit) {
         log.info("hit {}", hit);
         statService.addHit(hit);
+        log.info("Hit Успешно добавлен");
     }
 
     @GetMapping("/stats")
     public List<HitDto> getHit(Timestamp start, Timestamp end, String uris, Boolean unique) {
-        System.out.println(uris);
+        log.info("start {} end {} uris {} unique {}", start, end, uris, unique);
         List<HitDto> list = statService.getHit(start, end, uris, unique);
-        System.out.println(list);
+        log.info("Отправлен ответ: {} ", list);
         return list;
     }
 }
