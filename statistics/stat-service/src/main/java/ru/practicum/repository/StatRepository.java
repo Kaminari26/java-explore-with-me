@@ -24,7 +24,7 @@ public interface StatRepository extends JpaRepository<Hit, Long> {
             "AND s.uri IN :uris " +
             "GROUP BY s.app, s.uri " +
             "ORDER BY COUNT(DISTINCT s.ip) DESC")
-    List<HitDto> getStats(LocalDateTime start, LocalDateTime end, String uris);
+    List<HitDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris);
 
 
 }

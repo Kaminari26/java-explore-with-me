@@ -1,14 +1,14 @@
 package ru.practicum.service;
 
-import ru.practicum.model.Hit;
 import ru.practicum.model.HitDto;
+import ru.practicum.model.HitDtoRequest;
 
 import java.sql.Timestamp;
 import java.util.List;
 
 public interface IStatService {
-    void addHit(Hit hit);
+    void addHit(HitDtoRequest hitDtoRequest);
 
-    List<HitDto> getHit(Timestamp start, Timestamp end, String uris, Boolean unique);
+    List<HitDto> getHit(Timestamp start, Timestamp end, List<String> uris, Boolean unique);
 
 }

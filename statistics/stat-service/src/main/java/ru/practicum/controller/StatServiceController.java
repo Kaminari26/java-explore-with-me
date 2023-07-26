@@ -1,11 +1,12 @@
 package ru.practicum.controller;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.model.Hit;
 import ru.practicum.model.HitDto;
+import ru.practicum.model.HitDtoRequest;
 import ru.practicum.service.IStatService;
 
 import java.sql.Timestamp;
@@ -25,17 +26,20 @@ public class StatServiceController {
     }
 
     @PostMapping("/hit")
-    public void createItem(@RequestBody Hit hit) {
-        log.info("hit {}", hit);
-        statService.addHit(hit);
+    public void createItem(@RequestBody HitDtoRequest hitDtoRequest) {
+        log.info("hit {}", hitDtoRequest);
+        statService.addHit(hitDtoRequest);
         log.info("Hit Успешно добавлен");
     }
 
     @GetMapping("/stats")
-    public List<HitDto> getHit(Timestamp start, Timestamp end, String uris, Boolean unique) {
+    public List<HitDto> getHit(@RequestParam @NonNull Timestamp start,
+                               @RequestParam @NonNull Timestamp end,
+                               @RequestParam(required = false) List<String> uris,
+                               @RequestParam(defaultValue = "false") boolean unique) {
         log.info("start {} end {} uris {} unique {}", start, end, uris, unique);
-        List<HitDto> list = statService.getHit(start, end, uris, unique);
-        log.info("Отправлен ответ: {} ", list);
-        return list;
+        List<HitDto> dtos = statService.getHit(start, end, uris, unique);
+        log.info("Отправлен ответ: {} ", dtos);
+        return dtos;
     }
 }

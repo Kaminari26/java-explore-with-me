@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.model.Hit;
+import ru.practicum.model.HitDtoRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -29,10 +29,10 @@ public class StatsClient extends BaseClient {
     }
 
     public void createHit(HttpServletRequest request) {
-        Hit hit = Hit.builder().app(request.getServerName())
+        HitDtoRequest hit = HitDtoRequest.builder().app(request.getServerName())
                 .uri(request.getRequestURI())
                 .ip(request.getRemoteAddr())
-                .time(LocalDateTime.parse(LocalDateTime.now().format(FORMATTER)))
+                .timestamp(LocalDateTime.parse(LocalDateTime.now().format(FORMATTER)).toString())
                 .build();
         post("/hit", hit);
     }
