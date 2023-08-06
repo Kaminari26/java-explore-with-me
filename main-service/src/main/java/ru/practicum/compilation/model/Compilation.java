@@ -1,24 +1,26 @@
-package ru.practicum.event;
+package ru.practicum.compilation.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import ru.practicum.event.model.Event;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Entity
 @Builder
-public class Location {
+public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Float lat;
-    private Float lon;
+    @OneToMany
+    private List<Event> events;
+    private Boolean pinned;
+    private String title;
+
 }

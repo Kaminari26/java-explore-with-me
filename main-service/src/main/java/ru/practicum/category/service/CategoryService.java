@@ -11,6 +11,8 @@ import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
 
 import org.springframework.data.domain.Pageable;
+import ru.practicum.exeption.UserNotFoundException;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,8 +38,8 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public Category updateCategory(Long id, CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Категория не найдена"));
-        category.setName(category.getName());
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Категория не найдена"));
+        category.setName(categoryDto.getName());
         return categoryRepository.save(category);
     }
 
@@ -55,6 +57,6 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public Category getById(Long id) {
-        return categoryRepository.findById(id).orElseThrow(() -> new  IllegalArgumentException("Категория не найдена"));
+        return categoryRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Категория не найдена"));
     }
 }

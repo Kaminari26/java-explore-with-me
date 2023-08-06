@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Event {
     private String annotation;
+    @ManyToOne
     private Category category;
     private String createdOn;
     private String description;
@@ -29,6 +30,7 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "initiator_id", referencedColumnName = "id")
     private User initiator;
+    @OneToOne
     private Location location;
     private Boolean paid;
     private Integer participantLimit;
@@ -36,4 +38,5 @@ public class Event {
     private Boolean requestModeration;
     private String state;
     private String title;
+
 }

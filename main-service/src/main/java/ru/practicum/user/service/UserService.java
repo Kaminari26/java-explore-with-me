@@ -3,6 +3,7 @@ package ru.practicum.user.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.practicum.exeption.UserNotFoundException;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.repository.UserRepository;
@@ -22,8 +23,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void addNewUser(UserDto userDto) {
-        userRepository.save(UserMapper.toDtoUser(userDto));
+    public UserDto addNewUser(UserDto userDto) {
+        return UserMapper.toDtoUser(userRepository.save(UserMapper.toDtoUser(userDto)));
     }
 
     @Override
@@ -39,5 +40,10 @@ public class UserService implements IUserService {
     @Override
     public void removeUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public UserDto getUserById(Long id) {
+        return UserMapper.toDtoUser(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Пользователь не найден")));
     }
 }
