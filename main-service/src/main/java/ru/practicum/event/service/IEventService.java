@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IEventService {
     List<EventFullDto> getEventByUserId(Long id, int from, int size);
-    NewEventDto createNewEvent(Long userId, NewEventDto newEventDto);
+    EventFullDto createNewEvent(Long userId, NewEventDto newEventDto);
     EventFullDto getFullInfoByUserIdAndEventId(Long userId, Long eventId);
     NewEventDto updateEventCurrentUser(Long userId, Long eventId, NewEventDto newEventDto);
     NewEventDto getInfoEventByCurrentUser(Long userId, Long eventId);

@@ -8,6 +8,9 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.Location;
 import ru.practicum.user.dto.UserShortDto;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
+
 
 @Data
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ public class EventFullDto {
     private CategoryDto category;
     private Integer confirmedRequests;
     private String createdOn;
+    @Size(max = 7000)
     private String description;
     private String eventDate;
     private Long id;

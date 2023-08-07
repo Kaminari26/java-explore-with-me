@@ -10,6 +10,8 @@ import ru.practicum.event.Location;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,10 +20,12 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 public class Event {
+    @Size(max = 2000)
     private String annotation;
     @ManyToOne
     private Category category;
     private String createdOn;
+    @Size(max = 7000)
     private String description;
     private String eventDate;
     @Id
