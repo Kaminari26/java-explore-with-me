@@ -5,10 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.Location;
+import ru.practicum.event.StateAction;
+import ru.practicum.user.dto.UserShortDto;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -16,17 +17,18 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NewEventDto {
+public class UpdateEventAdminRequest {
     private String annotation;
     private Long category;
     @Size(max = 7000)
     private String description;
-
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime eventDate;
     private Location location;
     private Boolean paid;
-    private int participantLimit;
+    private Integer participantLimit;
     private Boolean requestModeration;
+    private StateAction stateAction;
     private String title;
+
 }

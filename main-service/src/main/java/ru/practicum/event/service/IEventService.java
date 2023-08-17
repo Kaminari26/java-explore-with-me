@@ -1,16 +1,33 @@
 package ru.practicum.event.service;
 
-import ru.practicum.event.dto.EventFullDto;
-import ru.practicum.event.dto.NewEventDto;
+import org.springframework.web.bind.annotation.RequestParam;
+import ru.practicum.category.model.Category;
+import ru.practicum.event.State;
+import ru.practicum.event.dto.*;
 import ru.practicum.event.model.Event;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IEventService {
     List<EventFullDto> getEventByUserId(Long id, int from, int size);
     EventFullDto createNewEvent(Long userId, NewEventDto newEventDto);
     EventFullDto getFullInfoByUserIdAndEventId(Long userId, Long eventId);
+    EventFullDto getEventById(Long eventId);
+    List<EventFullDto> getFullEventInfoByParam(List<Long> users,
+                                               List<State> states,
+                                               List<Long> categories,
+                                               LocalDateTime rangeStart,
+                                               LocalDateTime rangeEnd,
+                                               Integer from,
+                                               Integer size);
+    EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateEventAdminRequest);
     NewEventDto updateEventCurrentUser(Long userId, Long eventId, NewEventDto newEventDto);
     NewEventDto getInfoEventByCurrentUser(Long userId, Long eventId);
     NewEventDto updateStatusEvent(Long userId, Long eventId);
+    EventFullDto getEventByIdPublic(Long eventId, String ip, String uri);
+    List<EventShortDto> getEventsPublicController(String text, List<Long> categoryIds, Boolean paid, LocalDateTime start,
+                                                  LocalDateTime end, Boolean onlyAvailable, String sort, String ip, String uri, Integer from, Integer size);
+    EventFullDto getEventByIdByInitiator(Long eventId, Long userId);
+    EventFullDto updateEventByUser(EventUpdateRequestDto updateEventDto, Long eventId, Long userId);
 }

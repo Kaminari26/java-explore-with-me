@@ -1,15 +1,20 @@
 package ru.practicum.event.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.Location;
+import ru.practicum.event.State;
+import ru.practicum.event.StateAction;
 import ru.practicum.user.dto.UserShortDto;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -19,19 +24,23 @@ import javax.validation.constraints.Size;
 public class EventFullDto {
     private String annotation;
     private CategoryDto category;
-    private Integer confirmedRequests;
-    private String createdOn;
+    private Long confirmedRequests;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    private LocalDateTime createdOn;
     @Size(max = 7000)
     private String description;
-    private String eventDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    private LocalDateTime eventDate;
     private Long id;
     private UserShortDto initiator;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Location location;
     private Boolean paid;
     private Integer participantLimit;
-    private String publishedOn;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    private LocalDateTime publishedOn;
     private Boolean requestModeration;
-    private String state;
+    private State state;
     private String title;
-    private Integer views;
+    private Long views;
 }

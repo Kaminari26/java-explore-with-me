@@ -1,52 +1,48 @@
 package ru.practicum.client;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.DefaultUriBuilderFactory;
+
+import java.util.List;
+
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import ru.practicum.model.HitDto;
 import ru.practicum.model.HitDtoRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-
 @Service
-public class StatsClient extends BaseClient {
+public class StatsClient {
 
-    static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final String ABSOLUTE_URL = "http://localhost:9090/";
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final WebClient webClient = WebClient.builder()
+            .baseUrl(ABSOLUTE_URL)
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .build();
 
-    @Autowired
-    public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
-        super(builder
-                .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                .requestFactory(HttpComponentsClientHttpRequestFactory::new)
-                .build());
+
+    public void addHit(HitDtoRequest hitDtoRequest) {
+        restTemplate.postForLocation(ABSOLUTE_URL + "/hit", hitDtoRequest);
     }
 
-    public void createHit(HttpServletRequest request) {
-        HitDtoRequest hit = HitDtoRequest.builder().app(request.getServerName())
-                .uri(request.getRequestURI())
-                .ip(request.getRemoteAddr())
-                .timestamp(LocalDateTime.parse(LocalDateTime.now().format(FORMATTER)).toString())
-                .build();
-        post("/hit", hit);
-    }
 
-    public ResponseEntity<Object> getStats(LocalDateTime start, LocalDateTime end, String uris, Boolean unique) {
-        Map<String, Object> parameter = new HashMap<>();
-        parameter.put("start", start.format(FORMATTER));
-        parameter.put("end", end.format(FORMATTER));
-        if (uris != null) {
-            parameter.put("uris", uris);
+    public List<HitDto> getStats(String start, String end, List<String> uris, boolean unique) {
+        StringBuilder urisToSend = new StringBuilder();
+        for (String uri : uris) {
+            urisToSend.append(uri).append(",");
         }
-        if (unique) {
-            parameter.put("unique", true);
-        }
-        return get("/stats", null, parameter);
+        ResponseEntity<List<HitDto>> response = restTemplate.exchange(
+                 ABSOLUTE_URL + "/stats?start={start}&end={end}&uris={uris}&unique={unique}",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                },
+                start, end, urisToSend.toString(), unique);
+
+        return response.getBody();
     }
 }
