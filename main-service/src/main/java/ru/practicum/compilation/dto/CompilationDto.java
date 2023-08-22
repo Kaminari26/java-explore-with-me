@@ -4,19 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.model.Event;
 
 import javax.persistence.Entity;
 import java.util.List;
 
-@Data
-@RequiredArgsConstructor
 @AllArgsConstructor
+@Data
 @Builder
 public class CompilationDto {
-    private List<Event> events;
-    private Long id;
-    private Boolean pinned;
-    private String title;
+    private final Long id;
+    private final Boolean pinned;
+    private final String title;
+    private final List<EventShortDto> events;
 
 }

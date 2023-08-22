@@ -2,60 +2,136 @@ package ru.practicum.compilation.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.UtilityClass;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
+import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationsRepository;
+import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.event.model.Event;
+import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exeption.UserNotFoundException;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class CompilationsService implements ICompilationsService{
+public class CompilationsService implements ICompilationsService {
     private final CompilationsRepository compilationsRepository;
+    private final EventRepository eventRepository;
+    private final UtilityClass utilityClass;
 
     @Autowired
-    public CompilationsService(CompilationsRepository compilationsRepository){
+    public CompilationsService(CompilationsRepository compilationsRepository, EventRepository eventRepository, UtilityClass utilityClass) {
         this.compilationsRepository = compilationsRepository;
+        this.eventRepository = eventRepository;
+        this.utilityClass = utilityClass;
     }
 
     @Override
+    @Transactional
     public CompilationDto createNewCompilation(NewCompilationDto newCompilationDto) {
-        Compilation compilation = compilationsRepository.save(CompilationMapper.toCompilationDto(newCompilationDto));
-        return CompilationMapper.toCompilationDto(compilation);
+        Set<Long> eventsIds = newCompilationDto.getEvents();
+        Compilation compilation = CompilationMapper.toDto(newCompilationDto);
+        if (eventsIds != null) {
+            List<Event> events = eventRepository.findAllById(eventsIds);
+            compilation.setEvents(new HashSet<>(events));
+        }
+        Compilation savedCompilation = compilationsRepository.save(compilation);
+        List<EventShortDto> eventsDto = utilityClass.makeEventShortDto(savedCompilation.getEvents());
+        return CompilationMapper.toDto(savedCompilation, eventsDto);
     }
 
+
+    @Transactional
     @Override
     public void removeCompilation(Long id) {
-    compilationsRepository.deleteById(id);
-    }
-
-    @Override
-    public CompilationDto getCompilationById(Long id) {
-        Compilation compilation = compilationsRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Подборка не найдена"));
-        return CompilationMapper.toCompilationDto(compilation);
-    }
-
-    @Override
-    public List<CompilationDto> getCompilationsByPinned(Boolean pinned, int from, int size) {
-        int page = 0;
-        if (from != 0) {
-            page = from / size;
+        if (!compilationsRepository.existsById(id)) {
+            throw new UserNotFoundException("Подборка не найдена");
         }
-        Pageable pageable = PageRequest.of(page, size);
-        List<Compilation> compilations = compilationsRepository.findAllByPinned(pinned, pageable);
-        return compilations.stream().map(CompilationMapper::toCompilationDto).collect(Collectors.toList());
+        compilationsRepository.deleteById(id);
+
+    }
+
+    @Transactional(readOnly = true)
+    public CompilationDto getCompilationById(Long compId) {
+        Compilation compilation = compilationsRepository.findById(compId).orElseThrow(
+                () -> new UserNotFoundException("Подборка не найдена")
+        );
+        List<EventShortDto> eventsDto = utilityClass.makeEventShortDto(compilation.getEvents());
+        return CompilationMapper.toDto(compilation, eventsDto);
     }
 
     @Override
-    public CompilationDto updateCompilation(Long id, NewCompilationDto newCompilationDto) {
-        Compilation compilation = compilationsRepository.findById(id).orElseThrow(() ->
-                new UserNotFoundException("Подборка не найдена"));
-        Compilation newCompilations = compilationsRepository.save(CompilationMapper.updateCompilations(compilation, newCompilationDto));
-        return CompilationMapper.toCompilationDto(newCompilations);
+    @Transactional(readOnly = true)
+    public List<CompilationDto> getCompilationsByPinned(Boolean pinned, Integer from, Integer size) {
+        List<Compilation> compilations;
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        if (pinned != null) {
+            compilations = compilationsRepository.findAllByPinned(pinned, pageRequest);
+        } else {
+            compilations = compilationsRepository.findAll(pageRequest).getContent();
+        }
+
+        if (compilations.isEmpty()) {
+            return new ArrayList<>();
+        }
+        Set<Event> events = compilations.stream()
+                .flatMap(compilation -> compilation.getEvents().stream())
+                .collect(Collectors.toSet());
+        List<EventShortDto> eventsDtoList = utilityClass.makeEventShortDto(events);
+
+        Map<Long, EventShortDto> eventDtosMap = new HashMap<>();
+        for (EventShortDto eventShortDto : eventsDtoList) {
+            eventDtosMap.put(
+                    eventShortDto.getId(),
+                    eventShortDto
+            );
+        }
+
+        Map<Long, List<EventShortDto>> eventsDtoMapByCompilationId = compilations.stream()
+                .collect(Collectors.toMap(Compilation::getId, compilation -> {
+                    Set<Event> eventsSet = compilation.getEvents();
+                    return eventsSet.stream()
+                            .map(event -> eventDtosMap.get(event.getId()))
+                            .collect(Collectors.toList());
+                }));
+
+        return compilations.stream()
+                .map(compilation -> {
+                    Long compilationId = compilation.getId();
+                    List<EventShortDto> eventShortDtos = eventsDtoMapByCompilationId.get(compilationId);
+                    return CompilationMapper.toDto(compilation, eventShortDtos);
+                }).collect(Collectors.toList());
     }
+
+    @Transactional
+    @Override
+        public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest updateCompilationRequest) {
+            Compilation compilation = compilationsRepository.findById(compId).orElseThrow(
+                    () -> new UserNotFoundException("Подборка не найдена")
+            );
+
+            Set<Long> eventsIds = updateCompilationRequest.getEvents();
+            if (eventsIds != null) {
+                List<Event> events = eventRepository.findAllById(eventsIds);
+                compilation.setEvents(new HashSet<>(events));
+            }
+            if(updateCompilationRequest.getEvents() != null) {
+                Set<Event> events = new HashSet<>(eventRepository.findAllById(updateCompilationRequest.getEvents()));
+                CompilationMapper.toDto(updateCompilationRequest, compilation, events);
+            }
+
+            CompilationMapper.toDto(updateCompilationRequest, compilation, null);
+
+            List<EventShortDto> eventsDto = utilityClass.makeEventShortDto(compilation.getEvents());
+
+            Set<Event> updatedEvents = compilationsRepository.save(compilation).getEvents();
+
+            return CompilationMapper.toDto(compilation, eventsDto);
+        }
 }

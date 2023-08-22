@@ -44,7 +44,7 @@ public class EventPrivateController {
     }
     @PostMapping("/events")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public EventFullDto createNewEvent(@PathVariable Long userId,@RequestBody NewEventDto newEventDto) {
+    public EventFullDto createNewEvent(@PathVariable Long userId,@Valid @RequestBody NewEventDto newEventDto) {
         log.info("Пришел запрос Post /users/{userId}/events userId: {}, newEventDto {}", userId, newEventDto);
         EventFullDto event = eventService.createNewEvent(userId, newEventDto);
         log.info("Отправлен ответ: {}", event);

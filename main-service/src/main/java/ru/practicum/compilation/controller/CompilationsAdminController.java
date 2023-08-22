@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
+import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.service.ICompilationsService;
 
 @RestController
@@ -20,6 +21,7 @@ public class CompilationsAdminController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public CompilationDto createCompilation(@RequestBody NewCompilationDto newCompilationDto) {
         log.info("Пришел запрос Post /admin/compilations");
         CompilationDto compilationDto = compilationsService.createNewCompilation(newCompilationDto);
@@ -28,7 +30,7 @@ public class CompilationsAdminController {
     }
 
     @DeleteMapping("/{compId}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompilation(@PathVariable Long compId) {
         log.info("Удаление подборки " + compId);
         compilationsService.removeCompilation(compId);
@@ -36,9 +38,9 @@ public class CompilationsAdminController {
 
     @PatchMapping("/{compId}")
     public CompilationDto updateItem(@PathVariable Long compId,
-            @RequestBody NewCompilationDto newCompilationDto) {
-        log.info("Обновление подборки с id: {} dto: {}", compId, newCompilationDto);
-        CompilationDto compilationDto = compilationsService.updateCompilation(compId, newCompilationDto);
+            @RequestBody UpdateCompilationRequest updateCompilationRequest) {
+        log.info("Обновление подборки с id: {} dto: {}", compId, updateCompilationRequest);
+        CompilationDto compilationDto = compilationsService.updateCompilation(compId, updateCompilationRequest);
         log.info("Обновленный предмет " + compilationDto);
         return compilationDto;
     }
