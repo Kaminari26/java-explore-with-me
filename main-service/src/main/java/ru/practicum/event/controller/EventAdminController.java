@@ -26,7 +26,7 @@ public class EventAdminController {
     }
 
     @GetMapping
-    public List<EventFullDto> getEvent(@RequestParam(required = false) List<Long> users,
+    public List<EventFullDto> getAllEvent(@RequestParam(required = false) List<Long> users,
                                        @RequestParam(required = false) List<Long> categories,
                                        @RequestParam(required = false) List<State> states,
                                        @RequestParam(required = false)
