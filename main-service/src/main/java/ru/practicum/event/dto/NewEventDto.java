@@ -1,15 +1,11 @@
 package ru.practicum.event.dto;
 
+
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.*;
 import ru.practicum.event.Location;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Data
@@ -19,9 +15,8 @@ import java.time.LocalDateTime;
 public class NewEventDto {
     private String annotation;
     private Long category;
-    @Size(max = 7000)
+    @NotBlank
     private String description;
-
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime eventDate;
     private Location location;

@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 @RequiredArgsConstructor
@@ -20,8 +22,11 @@ public class User {
     private Long id;
 
     @NotBlank
+    @Size(max = 250,min = 2)
     private String name;
 
     @NotBlank
+    @Size(max = 256,min = 6)
+    @Email
     private String email;
 }

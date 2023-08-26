@@ -9,6 +9,7 @@ import ru.practicum.event.dto.ConfirmedEventDto;
 import ru.practicum.requests.model.ParticipationRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest,Long>, JpaSpecificationExecutor<ParticipationRequest> {
@@ -23,4 +24,5 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     List<ParticipationRequest> findAllByEventId(Long eventId);
     List<ParticipationRequest> findAllByIdIn(List<Long> requestIds);
     List<ParticipationRequest> findAllByEventIdAndStatus(Long eventId, RequestStatus status);
+    Optional<ParticipationRequest> findByEventIdAndRequesterId(Long eventId, Long requesterId);
 }

@@ -14,13 +14,8 @@ public interface IEventService {
     EventFullDto createNewEvent(Long userId, NewEventDto newEventDto);
     EventFullDto getFullInfoByUserIdAndEventId(Long userId, Long eventId);
     EventFullDto getEventById(Long eventId);
-    List<EventFullDto> getFullEventInfoByParam(List<Long> users,
-                                               List<State> states,
-                                               List<Long> categories,
-                                               LocalDateTime rangeStart,
-                                               LocalDateTime rangeEnd,
-                                               Integer from,
-                                               Integer size);
+    List<EventFullDto> getFullEventInfoByParam(List<Long> users, List<Long> categories, List<State> states,
+                                               LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
     EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateEventAdminRequest);
     NewEventDto updateEventCurrentUser(Long userId, Long eventId, NewEventDto newEventDto);
     NewEventDto getInfoEventByCurrentUser(Long userId, Long eventId);

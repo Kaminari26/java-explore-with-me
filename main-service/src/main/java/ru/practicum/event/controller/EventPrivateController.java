@@ -44,7 +44,7 @@ public class EventPrivateController {
     }
     @PostMapping("/events")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public EventFullDto createNewEvent(@PathVariable Long userId,@Valid @RequestBody NewEventDto newEventDto) {
+    public EventFullDto createNewEvent(@PathVariable Long userId, @Valid @RequestBody NewEventDto newEventDto) {
         log.info("Пришел запрос Post /users/{userId}/events userId: {}, newEventDto {}", userId, newEventDto);
         EventFullDto event = eventService.createNewEvent(userId, newEventDto);
         log.info("Отправлен ответ: {}", event);
@@ -65,8 +65,7 @@ public class EventPrivateController {
 
     @PatchMapping("/events/{eventId}")
     public EventFullDto updateEventByUser(@PathVariable("userId") Long userId, @PathVariable("eventId") Long eventId,
-                                          @Valid @RequestBody EventUpdateRequestDto eventDto
-    ) {
+                                          @Valid @RequestBody EventUpdateRequestDto eventDto) {
         log.info("Пришел запрос Patch /users/{userId}/events/{eventId}  с userId: {}, eventId: {}", userId, eventId);
         EventFullDto eventFullDto = eventService.updateEventByUser(eventDto, eventId, userId);
         log.info("Отправлен ответ: {}", eventFullDto);

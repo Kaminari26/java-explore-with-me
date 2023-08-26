@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.category.model.Category;
 import ru.practicum.event.Location;
 import ru.practicum.event.State;
@@ -21,16 +22,18 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 public class Event {
-    @Size(max = 2000)
+    @Size(max = 2000, min = 20)
     @NotBlank
     private String annotation;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Category category;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn;
-    @Size(max = 7000)
-    @NotBlank(message = "Необходимо описание")
+    @Size(max = 7000, min = 20)
+    //@NotBlank(message = "Необходимо описание")
     private String description;
     @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +45,6 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     private Location location;
     private Boolean paid;
-    @NotNull
     private Integer participantLimit;
     private LocalDateTime publishedOn;
     private Boolean requestModeration;
@@ -51,6 +53,7 @@ public class Event {
     @NotNull
     private State state;
     @NotBlank
+    @Size(max = 120,min = 3)
     private String title;
 
 }

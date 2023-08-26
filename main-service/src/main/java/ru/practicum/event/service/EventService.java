@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.practicum.UtilityClass;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
@@ -19,6 +20,7 @@ import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exeption.DataConflictException;
+import ru.practicum.exeption.InvalidStatusException;
 import ru.practicum.exeption.UserNotFoundException;
 import ru.practicum.model.HitDto;
 import ru.practicum.model.HitDtoRequest;
@@ -77,8 +79,20 @@ public class EventService implements IEventService {
     @Override
     @Transactional(readOnly = true)
     public EventFullDto createNewEvent(Long userId, NewEventDto newEventDto) {
+        if(newEventDto.getDescription().isBlank()) {
+            throw new InvalidStatusException("Описание не может быть пустым");
+        }
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
         Category category = categoryRepository.findById(newEventDto.getCategory()).orElseThrow(() -> new UserNotFoundException("Категория не найдена"));
+        if(newEventDto.getPaid()== null) {
+            newEventDto.setPaid(false);
+        }
+        if(newEventDto.getRequestModeration()== null) {
+            newEventDto.setRequestModeration(true);
+        }
+        if(newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
+            throw new IllegalArgumentException("Дата уже наступила");
+        }
         Event event = EventMapper.toDto(newEventDto, user, category, State.PENDING);
         eventRepository.save(event);
         return EventMapper.toDto(event, 0L, 0L);
@@ -98,7 +112,8 @@ public class EventService implements IEventService {
 
     @Override
    @Transactional
-    public List<EventFullDto> getFullEventInfoByParam(List<Long> users, List<State> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
+    public List<EventFullDto> getFullEventInfoByParam(List<Long> users, List<Long> categories, List<State> states,
+                                                      LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
         if (rangeStart == null) {
             rangeStart = LocalDateTime.now().minusYears(4000);
         }
@@ -115,6 +130,7 @@ public class EventService implements IEventService {
                 size,
                 Sort.by(Sort.Direction.DESC, "eventDate"));
         List<Event> events = eventRepository.findAll(eventSpecification, pageRequest).getContent();
+        List<Event> events322 = eventRepository.findAll();
         if (events.isEmpty()) {
             return new ArrayList<>();
         }
@@ -125,8 +141,20 @@ public class EventService implements IEventService {
     @Transactional
     public EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new UserNotFoundException("Событие не найдено"));
-
+        if (updateEventAdminRequest.getStateAction() != null) {
+            if (event.getState() != State.PENDING) {
+                throw new DataConflictException("Неверный статус события");
+            } else if (
+                    event.getEventDate().isBefore(LocalDateTime.now().plusHours(1)) && updateEventAdminRequest.getStateAction() == StateAction.PUBLISH_EVENT
+            ) {
+                throw new DataConflictException("Невозможно опубликовать, осталось менее часа до начала события");
+            }
+        }
         if (updateEventAdminRequest.getEventDate() != null) {
+
+            if(updateEventAdminRequest.getEventDate().isBefore(LocalDateTime.now())) {
+                throw new IllegalArgumentException("Дата уже наступила");
+            }
             event.setEventDate(updateEventAdminRequest.getEventDate());
         }
         if (updateEventAdminRequest.getPaid() != null) {
@@ -153,6 +181,9 @@ public class EventService implements IEventService {
             }
             if (updateEventAdminRequest.getStateAction() == StateAction.PUBLISH_EVENT) {
                 event.setState(State.PUBLISHED);
+            }
+            if (updateEventAdminRequest.getStateAction() == StateAction.REJECT_EVENT) {
+                event.setState(State.REJECTED);
             }
         }
         if (updateEventAdminRequest.getParticipantLimit() != null) {
@@ -371,8 +402,11 @@ public class EventService implements IEventService {
         if (!Objects.equals(initiator.getId(), userId)) {
             throw new DataConflictException("Нужно быть автором события");
         }
-        if (event.getState() == State.PUBLISHED) {
-            throw new EntityNotFoundException("Неверный статус события");
+//        if (event.getState() == State.PUBLISHED) {
+//            throw new EntityNotFoundException("Неверный статус события");
+//        }
+        if (eventDate != null && eventDate.isBefore(timeCriteria)) {
+            throw new DataConflictException("Неверно указано время");
         }
         State newState = event.getState();
         StateAction action = updateEventDto.getStateAction();

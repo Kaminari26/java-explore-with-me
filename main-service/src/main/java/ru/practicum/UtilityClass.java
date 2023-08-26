@@ -35,12 +35,6 @@ public class UtilityClass {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    protected static final String USER_NOT_FOUND = "Пользователь не найден";
-    protected static final String CATEGORY_NOT_FOUND = "Категория не найдена";
-    protected static final String EVENT_NOT_FOUND = "Событие не найдено";
-    protected static final String COMPILATION_NOT_FOUND = "Компиляция не найдена";
-    protected static final String REQUEST_NOT_FOUND = "Запрос не найден";
-
     public List<EventShortDto> makeEventShortDto(Collection<Event> events) {
         Map<String, Long> viewStatsMap = toViewStats(events);
 

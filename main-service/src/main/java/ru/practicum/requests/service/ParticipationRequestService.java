@@ -1,6 +1,7 @@
 package ru.practicum.requests.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.practicum.event.RequestStatus;
 import ru.practicum.event.State;
@@ -18,8 +19,10 @@ import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,12 +39,21 @@ public class ParticipationRequestService implements IParticipationRequestService
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto createParticipationRequest(Long userId, Long eventId, LocalDateTime localDateTime) {
+        Optional<ParticipationRequest> request = participationRequestRepository.findByEventIdAndRequesterId(eventId, userId);
+        if (request.isPresent()) {
+            throw new DataConflictException("Запрос на участие уже был отправлен");
+        }
 
         User requester = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new UserNotFoundException("Событие не найдено"));
-        if (event.getState() != State.PUBLISHED) {
-            throw new DataConflictException("Событие еще не опубликовано");
+        if (userId.equals(event.getInitiator().getId())) {
+            throw new DataConflictException("Запрос на участие уже отправлен");
+        }
+
+        if (!event.getState().equals(State.PUBLISHED)) {
+            throw new DataConflictException("Не далось опубликовать событие");
         }
         int limit = event.getParticipantLimit();
         if (limit != 0) {
@@ -50,12 +62,18 @@ public class ParticipationRequestService implements IParticipationRequestService
                 throw new DataConflictException("Слишком много участников события");
             }
         }
+
+
+
         ParticipationRequest participationRequest = ParticipationRequest.builder().
                 created(localDateTime).
                 requester(requester).
                 event(event).
                 status(RequestStatus.PENDING).
                 build();
+        if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
+            participationRequest.setStatus(RequestStatus.CONFIRMED);
+        }
         return ParticipationRequestMapper.toParticipationRequestDto(participationRequestRepository.save(participationRequest));
     }
 

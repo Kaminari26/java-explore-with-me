@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.user.service.IUserService;
 import ru.practicum.user.dto.UserDto;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -25,7 +26,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public UserDto createNewUser(@RequestBody UserDto userDto) {
+    public UserDto createNewUser(@RequestBody @Valid UserDto userDto) {
         log.info("Пришел запрос Post /users  UserDto: {}", userDto);
         UserDto userDto1 = userService.addNewUser(userDto);
         log.info("Пользователь добавлен! {}", userDto1);
@@ -42,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> getUsers(@RequestParam List<Long> ids, @RequestParam(value = "from", defaultValue = "0", required = false) Integer from,
+    public List<UserDto> getUsers(@RequestParam(required = false) List<Long> ids, @RequestParam(value = "from", defaultValue = "0", required = false) Integer from,
                                   @RequestParam(value = "size", defaultValue = "10", required = false) Integer size) {
         log.info("Пришел запрос Get /users ids: {}, from: {}, size: {}", ids, from, size);
         if (size <= 0 || from < 0) {

@@ -5,15 +5,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
 
 import org.springframework.data.domain.Pageable;
+import ru.practicum.exeption.DataConflictException;
 import ru.practicum.exeption.UserNotFoundException;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +31,12 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
+    @Transactional
     public Category createNewCategory(CategoryDto categoryDto) {
+        Optional<Category> optionalCategory = categoryRepository.findByName(categoryDto.getName());
+        if(optionalCategory.isPresent()) {
+            throw new DataConflictException("Имя уже занято");
+        }
         return categoryRepository.save(CategoryMapper.toDtoCategory(categoryDto));
     }
 
@@ -37,8 +46,13 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
+    @Transactional
     public Category updateCategory(Long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Категория не найдена"));
+        Optional<Category> optionalCategory = categoryRepository.findByName(categoryDto.getName());
+        if(optionalCategory.isPresent() && !Objects.equals(optionalCategory.get().getId(), category.getId())) {
+            throw new DataConflictException("Имя уже занято");
+        }
         category.setName(categoryDto.getName());
         return categoryRepository.save(category);
     }

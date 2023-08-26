@@ -42,6 +42,9 @@ public class CompilationsService implements ICompilationsService {
             compilation.setEvents(new HashSet<>(events));
         }
         Compilation savedCompilation = compilationsRepository.save(compilation);
+        if (savedCompilation.getEvents() == null) {
+            return CompilationMapper.toDto(savedCompilation, null);
+        }
         List<EventShortDto> eventsDto = utilityClass.makeEventShortDto(savedCompilation.getEvents());
         return CompilationMapper.toDto(savedCompilation, eventsDto);
     }

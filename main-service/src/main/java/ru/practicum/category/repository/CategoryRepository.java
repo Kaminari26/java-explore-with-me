@@ -7,8 +7,9 @@ import ru.practicum.category.model.Category;
 
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
+
 @Repository
 public interface CategoryRepository extends JpaRepository<Category,Long> {
-
-    Page<Category> findAll(Pageable pageable);
+    Optional<Category> findByName(String name);
 }

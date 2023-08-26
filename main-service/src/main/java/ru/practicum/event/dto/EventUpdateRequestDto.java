@@ -1,10 +1,9 @@
 package ru.practicum.event.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.event.LocationDto;
 import ru.practicum.event.StateAction;
 
@@ -16,19 +15,18 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 public class EventUpdateRequestDto {
-    @Length( min = 20, max = 2000)
-    private final String annotation;
-    private final Long category;
-    @Length( min = 20, max = 7000)
-    private final String description;
-    @Future(message = "Неверно указана дата")
-    private final LocalDateTime eventDate;
-    private final Long initiator;
-    private final LocationDto location;
-    private final Boolean paid;
-    private final Integer participantLimit;
-    private final Boolean requestModeration;
-    private final StateAction stateAction;
-    @Length( min = 3, max = 120)
-    private final String title;
+    private  String annotation;
+    private  Long category;
+    private  String description;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    private LocalDateTime eventDate;
+
+    private  Long initiator;
+    private  LocationDto location;
+    private  Boolean paid;
+    private  Integer participantLimit;
+    private  Boolean requestModeration;
+    private  StateAction stateAction;
+    private  String title;
 }

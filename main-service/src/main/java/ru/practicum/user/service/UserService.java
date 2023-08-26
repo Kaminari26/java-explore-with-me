@@ -3,13 +3,19 @@ package ru.practicum.user.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.practicum.category.model.Category;
+import ru.practicum.exeption.DataConflictException;
+import ru.practicum.exeption.InvalidStatusException;
 import ru.practicum.exeption.UserNotFoundException;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.mapper.UserMapper;
+import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
 import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +30,13 @@ public class UserService implements IUserService {
 
     @Override
     public UserDto addNewUser(UserDto userDto) {
+        if (userDto.getEmail().length() > 254) {
+            throw  new InvalidStatusException("Слишком длинная почта");
+        }
+        Optional<User> optionalUser = userRepository.findByName(userDto.getName());
+        if(optionalUser.isPresent()) {
+            throw new DataConflictException("Имя уже занято");
+        }
         return UserMapper.toDtoUser(userRepository.save(UserMapper.toDtoUser(userDto)));
     }
 
@@ -34,6 +47,9 @@ public class UserService implements IUserService {
             page = from / size;
         }
         Pageable pageable = PageRequest.of(page, size);
+        if(ids == null) {
+            return userRepository.findAll(pageable).stream().map(UserMapper::toDtoUser).collect(Collectors.toList());
+        }
         return userRepository.findAllByIdIn(ids, pageable).stream().map(UserMapper::toDtoUser).collect(Collectors.toList());
     }
 
