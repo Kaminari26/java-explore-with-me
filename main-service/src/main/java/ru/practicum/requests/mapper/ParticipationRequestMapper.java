@@ -14,7 +14,7 @@ public class ParticipationRequestMapper {
                 build();
     }
 
-    public static ParticipationRequestDto toDto (ParticipationRequest participationRequest) {
+    public static ParticipationRequestDto toDto(ParticipationRequest participationRequest) {
         return ParticipationRequestDto.builder().
                 requester(participationRequest.getRequester().getId()).
                 created(participationRequest.getCreated()).

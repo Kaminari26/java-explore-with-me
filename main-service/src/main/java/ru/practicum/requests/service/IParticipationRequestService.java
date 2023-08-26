@@ -9,9 +9,13 @@ import java.util.List;
 
 public interface IParticipationRequestService {
     ParticipationRequestDto createParticipationRequest(Long userId, Long eventId, LocalDateTime localDateTime);
-    ParticipationRequestDto cancelParticipationRequest(Long userId,Long eventId);
+
+    ParticipationRequestDto cancelParticipationRequest(Long userId, Long eventId);
+
     List<ParticipationRequestDto> getParticipationRequest(Long userId);
+
     List<ParticipationRequestDto> getAllUserEventRequests(Long eventId, Long userId);
+
     EventParticipationRequestStatusUpdateResponseDto updateParticipationRequestsStatus(
             EventParticipationRequestStatusUpdateRequestDto updater,
             Long eventId,

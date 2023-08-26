@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
-import java.util.Map;
 
 @RestControllerAdvice(basePackages = "ru.practicum")
 @Slf4j
@@ -37,11 +35,13 @@ public class ErrorHandler {
     public ErrorResponse EntityNotFoundExceptionHandler(final EntityNotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)//+
     public ErrorResponse EntityNotFoundExceptionHandler(final IllegalArgumentException e) {
         return new ErrorResponse(e.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)//+ confl
     public ErrorResponse EntityNotFoundExceptionHandler(final DataIntegrityViolationException e) {
@@ -53,9 +53,10 @@ public class ErrorHandler {
     public ErrorResponse ifTypeMismatchException(final TypeMismatchException e) {
         return new ErrorResponse(e.getMessage());
     }
-@ExceptionHandler
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse MethodArgumentNotValidException (final MethodArgumentNotValidException e) {
+    public ErrorResponse MethodArgumentNotValidException(final MethodArgumentNotValidException e) {
         return new ErrorResponse(e.getMessage());
     }
 

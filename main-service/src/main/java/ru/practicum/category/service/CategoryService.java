@@ -3,15 +3,13 @@ package ru.practicum.category.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
-
-import org.springframework.data.domain.Pageable;
 import ru.practicum.exeption.DataConflictException;
 import ru.practicum.exeption.UserNotFoundException;
 
@@ -34,7 +32,7 @@ public class CategoryService implements ICategoryService {
     @Transactional
     public Category createNewCategory(CategoryDto categoryDto) {
         Optional<Category> optionalCategory = categoryRepository.findByName(categoryDto.getName());
-        if(optionalCategory.isPresent()) {
+        if (optionalCategory.isPresent()) {
             throw new DataConflictException("Имя уже занято");
         }
         return categoryRepository.save(CategoryMapper.toDtoCategory(categoryDto));
@@ -50,7 +48,7 @@ public class CategoryService implements ICategoryService {
     public Category updateCategory(Long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Категория не найдена"));
         Optional<Category> optionalCategory = categoryRepository.findByName(categoryDto.getName());
-        if(optionalCategory.isPresent() && !Objects.equals(optionalCategory.get().getId(), category.getId())) {
+        if (optionalCategory.isPresent() && !Objects.equals(optionalCategory.get().getId(), category.getId())) {
             throw new DataConflictException("Имя уже занято");
         }
         category.setName(categoryDto.getName());

@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.event.RequestStatus;
-import ru.practicum.event.State;
 import ru.practicum.event.model.Event;
 import ru.practicum.user.model.User;
 

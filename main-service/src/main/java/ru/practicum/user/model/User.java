@@ -22,11 +22,11 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Size(max = 250,min = 2)
+    @Size(max = 250, min = 2)
     private String name;
 
     @NotBlank
-    @Size(max = 256,min = 6)
+    @Size(max = 256, min = 6)
     @Email
     private String email;
 }

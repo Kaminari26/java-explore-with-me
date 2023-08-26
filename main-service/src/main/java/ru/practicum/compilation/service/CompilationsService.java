@@ -114,27 +114,27 @@ public class CompilationsService implements ICompilationsService {
 
     @Transactional
     @Override
-        public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest updateCompilationRequest) {
-            Compilation compilation = compilationsRepository.findById(compId).orElseThrow(
-                    () -> new UserNotFoundException("Подборка не найдена")
-            );
+    public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest updateCompilationRequest) {
+        Compilation compilation = compilationsRepository.findById(compId).orElseThrow(
+                () -> new UserNotFoundException("Подборка не найдена")
+        );
 
-            Set<Long> eventsIds = updateCompilationRequest.getEvents();
-            if (eventsIds != null) {
-                List<Event> events = eventRepository.findAllById(eventsIds);
-                compilation.setEvents(new HashSet<>(events));
-            }
-            if(updateCompilationRequest.getEvents() != null) {
-                Set<Event> events = new HashSet<>(eventRepository.findAllById(updateCompilationRequest.getEvents()));
-                CompilationMapper.toDto(updateCompilationRequest, compilation, events);
-            }
-
-            CompilationMapper.toDto(updateCompilationRequest, compilation, null);
-
-            List<EventShortDto> eventsDto = utilityClass.makeEventShortDto(compilation.getEvents());
-
-            Set<Event> updatedEvents = compilationsRepository.save(compilation).getEvents();
-
-            return CompilationMapper.toDto(compilation, eventsDto);
+        Set<Long> eventsIds = updateCompilationRequest.getEvents();
+        if (eventsIds != null) {
+            List<Event> events = eventRepository.findAllById(eventsIds);
+            compilation.setEvents(new HashSet<>(events));
         }
+        if (updateCompilationRequest.getEvents() != null) {
+            Set<Event> events = new HashSet<>(eventRepository.findAllById(updateCompilationRequest.getEvents()));
+            CompilationMapper.toDto(updateCompilationRequest, compilation, events);
+        }
+
+        CompilationMapper.toDto(updateCompilationRequest, compilation, null);
+
+        List<EventShortDto> eventsDto = utilityClass.makeEventShortDto(compilation.getEvents());
+
+        Set<Event> updatedEvents = compilationsRepository.save(compilation).getEvents();
+
+        return CompilationMapper.toDto(compilation, eventsDto);
+    }
 }

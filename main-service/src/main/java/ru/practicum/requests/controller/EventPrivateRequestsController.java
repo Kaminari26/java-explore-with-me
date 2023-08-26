@@ -14,16 +14,17 @@ import java.util.List;
 @RequestMapping(path = "/users/{userId}/requests")
 public class EventPrivateRequestsController {
     private final IParticipationRequestService participationRequestService;
+
     private EventPrivateRequestsController(IParticipationRequestService participationRequestService) {
         this.participationRequestService = participationRequestService;
     }
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ParticipationRequestDto createNewRequest(@PathVariable Long userId , @RequestParam Long eventId) {
+    public ParticipationRequestDto createNewRequest(@PathVariable Long userId, @RequestParam Long eventId) {
         LocalDateTime localDateTime = LocalDateTime.now();
-        log.info("Пришел запрос Post /users/{userId}/requests userId: {}, eventId{}.", userId,eventId);
-        ParticipationRequestDto participationRequestDtoReady = participationRequestService.createParticipationRequest(userId, eventId,localDateTime);
+        log.info("Пришел запрос Post /users/{userId}/requests userId: {}, eventId{}.", userId, eventId);
+        ParticipationRequestDto participationRequestDtoReady = participationRequestService.createParticipationRequest(userId, eventId, localDateTime);
         log.info("Отправлен ответ: {}", participationRequestDtoReady);
         return participationRequestDtoReady;
     }
@@ -35,8 +36,9 @@ public class EventPrivateRequestsController {
         log.info("Отправлен ответ: {}", participationRequestDtoReady);
         return participationRequestDtoReady;
     }
+
     @PatchMapping("/{requestId}/cancel")
-    public ParticipationRequestDto cancelParticipationRequest(@PathVariable Long userId ,@PathVariable Long requestId) {
+    public ParticipationRequestDto cancelParticipationRequest(@PathVariable Long userId, @PathVariable Long requestId) {
         log.info("Пришел запрос /users/{userId}/requests/{requestId}/cancel userId: {}, requestId {}.", userId, requestId);
         ParticipationRequestDto requestDto = participationRequestService.cancelParticipationRequest(userId, requestId);
         log.info("Отправлен ответ: {}", requestDto);

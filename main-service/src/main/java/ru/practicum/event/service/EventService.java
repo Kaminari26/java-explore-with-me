@@ -7,7 +7,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.practicum.UtilityClass;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
@@ -37,7 +36,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static ru.practicum.UtilityClass.*;
+import static ru.practicum.UtilityClass.formatTimeToString;
 
 @Service
 @Transactional(readOnly = true)
@@ -50,13 +49,14 @@ public class EventService implements IEventService {
     private static final StatsClient statClient = new StatsClient();
 
     @Autowired
-    public EventService(EventRepository eventRepository, UserRepository userRepository, CategoryRepository categoryRepository, UtilityClass utilityClass,ParticipationRequestRepository participationRequestRepository) {
+    public EventService(EventRepository eventRepository, UserRepository userRepository, CategoryRepository categoryRepository, UtilityClass utilityClass, ParticipationRequestRepository participationRequestRepository) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.utilityClass = utilityClass;
         this.participationRequestRepository = participationRequestRepository;
     }
+
     private static final String APP = "ewm-main-service";
     private static final String LOWER_DATE = "1970-01-01 00:00:00";
 
@@ -79,18 +79,18 @@ public class EventService implements IEventService {
     @Override
     @Transactional(readOnly = true)
     public EventFullDto createNewEvent(Long userId, NewEventDto newEventDto) {
-        if(newEventDto.getDescription().isBlank()) {
+        if (newEventDto.getDescription().isBlank()) {
             throw new InvalidStatusException("Описание не может быть пустым");
         }
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
         Category category = categoryRepository.findById(newEventDto.getCategory()).orElseThrow(() -> new UserNotFoundException("Категория не найдена"));
-        if(newEventDto.getPaid()== null) {
+        if (newEventDto.getPaid() == null) {
             newEventDto.setPaid(false);
         }
-        if(newEventDto.getRequestModeration()== null) {
+        if (newEventDto.getRequestModeration() == null) {
             newEventDto.setRequestModeration(true);
         }
-        if(newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
+        if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
             throw new IllegalArgumentException("Дата уже наступила");
         }
         Event event = EventMapper.toDto(newEventDto, user, category, State.PENDING);
@@ -111,7 +111,7 @@ public class EventService implements IEventService {
     }
 
     @Override
-   @Transactional
+    @Transactional
     public List<EventFullDto> getFullEventInfoByParam(List<Long> users, List<Long> categories, List<State> states,
                                                       LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
         if (rangeStart == null) {
@@ -152,7 +152,7 @@ public class EventService implements IEventService {
         }
         if (updateEventAdminRequest.getEventDate() != null) {
 
-            if(updateEventAdminRequest.getEventDate().isBefore(LocalDateTime.now())) {
+            if (updateEventAdminRequest.getEventDate().isBefore(LocalDateTime.now())) {
                 throw new IllegalArgumentException("Дата уже наступила");
             }
             event.setEventDate(updateEventAdminRequest.getEventDate());
@@ -256,9 +256,10 @@ public class EventService implements IEventService {
 
         return eventsDto;
     }
+
     @Transactional(readOnly = true)
     public List<EventShortDto> getEventsPublicController(String text, List<Long> categoryIds, Boolean paid, LocalDateTime start,
-            LocalDateTime end, Boolean onlyAvailable, String sort, String ip, String uri, Integer from, Integer size
+                                                         LocalDateTime end, Boolean onlyAvailable, String sort, String ip, String uri, Integer from, Integer size
     ) {
         statClient.addHit(new HitDtoRequest(
                 APP,
@@ -300,10 +301,12 @@ public class EventService implements IEventService {
         }
         return eventShortDtos;
     }
+
     private Specification<Event> getPaid(Boolean paid) {
         return paid == null ? null : (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("paid"), paid);
     }
-    private Specification<Event>AnnotationAndDescription(String text) {
+
+    private Specification<Event> AnnotationAndDescription(String text) {
         return text == null ? null : (root, query, criteriaBuilder) -> {
             String lowerCasedText = text.toLowerCase();
             Expression<String> annotation = criteriaBuilder.lower(root.get("annotation"));
@@ -314,6 +317,7 @@ public class EventService implements IEventService {
             );
         };
     }
+
     private Specification<Event> byParticipantLimit() {
         return (root, query, criteriaBuilder) -> {
             Subquery<Long> sub = query.subquery(Long.class);

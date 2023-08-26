@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.user.service.IUserService;
 import ru.practicum.user.dto.UserDto;
+import ru.practicum.user.service.IUserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -21,7 +21,6 @@ public class UserController {
     public UserController(IUserService userService) {
         this.userService = userService;
     }
-
 
 
     @PostMapping

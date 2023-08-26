@@ -6,13 +6,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.practicum.model.HitDto;
 import ru.practicum.model.HitDtoRequest;
+
+import java.util.List;
 
 @Service
 public class StatsClient {
@@ -36,7 +35,7 @@ public class StatsClient {
             urisToSend.append(uri).append(",");
         }
         ResponseEntity<List<HitDto>> response = restTemplate.exchange(
-                 ABSOLUTE_URL + "/stats?start={start}&end={end}&uris={uris}&unique={unique}",
+                ABSOLUTE_URL + "/stats?start={start}&end={end}&uris={uris}&unique={unique}",
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {

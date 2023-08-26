@@ -1,8 +1,8 @@
 package ru.practicum.requests.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.RequestStatus;
 import ru.practicum.event.State;
 import ru.practicum.event.model.Event;
@@ -11,28 +11,26 @@ import ru.practicum.exeption.DataConflictException;
 import ru.practicum.exeption.UserNotFoundException;
 import ru.practicum.requests.dto.EventParticipationRequestStatusUpdateRequestDto;
 import ru.practicum.requests.dto.EventParticipationRequestStatusUpdateResponseDto;
-import ru.practicum.requests.model.ParticipationRequest;
 import ru.practicum.requests.dto.ParticipationRequestDto;
 import ru.practicum.requests.mapper.ParticipationRequestMapper;
+import ru.practicum.requests.model.ParticipationRequest;
 import ru.practicum.requests.repository.ParticipationRequestRepository;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ParticipationRequestService implements IParticipationRequestService{
+public class ParticipationRequestService implements IParticipationRequestService {
     private final ParticipationRequestRepository participationRequestRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public ParticipationRequestService(ParticipationRequestRepository participationRequestRepository,UserRepository userRepository,EventRepository eventRepository) {
+    public ParticipationRequestService(ParticipationRequestRepository participationRequestRepository, UserRepository userRepository, EventRepository eventRepository) {
         this.participationRequestRepository = participationRequestRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
@@ -62,7 +60,6 @@ public class ParticipationRequestService implements IParticipationRequestService
                 throw new DataConflictException("Слишком много участников события");
             }
         }
-
 
 
         ParticipationRequest participationRequest = ParticipationRequest.builder().
@@ -110,6 +107,7 @@ public class ParticipationRequestService implements IParticipationRequestService
                 .map(ParticipationRequestMapper::toParticipationRequestDto)
                 .collect(Collectors.toList());
     }
+
     @Transactional
     public EventParticipationRequestStatusUpdateResponseDto updateParticipationRequestsStatus(
             EventParticipationRequestStatusUpdateRequestDto updater,

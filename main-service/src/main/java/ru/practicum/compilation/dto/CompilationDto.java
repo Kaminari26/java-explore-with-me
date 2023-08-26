@@ -3,11 +3,8 @@ package ru.practicum.compilation.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import ru.practicum.event.dto.EventShortDto;
-import ru.practicum.event.model.Event;
 
-import javax.persistence.Entity;
 import java.util.List;
 
 @AllArgsConstructor

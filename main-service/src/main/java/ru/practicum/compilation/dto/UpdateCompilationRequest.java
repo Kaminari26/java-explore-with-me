@@ -5,10 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.event.model.Event;
 
 import java.util.HashSet;
-import java.util.List;
 
 @Data
 @ToString

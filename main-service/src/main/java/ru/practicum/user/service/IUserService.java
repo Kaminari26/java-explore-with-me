@@ -5,10 +5,11 @@ import ru.practicum.user.dto.UserDto;
 import java.util.List;
 
 public interface IUserService {
-UserDto addNewUser(UserDto userDto);
-List<UserDto> getUsers(List<Long> ids, int from, int size);
+    UserDto addNewUser(UserDto userDto);
 
-void removeUser(Long id);
+    List<UserDto> getUsers(List<Long> ids, int from, int size);
+
+    void removeUser(Long id);
 
     UserDto getUserById(Long id);
 }

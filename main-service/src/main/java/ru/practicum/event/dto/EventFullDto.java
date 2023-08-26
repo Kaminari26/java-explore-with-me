@@ -9,10 +9,8 @@ import lombok.RequiredArgsConstructor;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.Location;
 import ru.practicum.event.State;
-import ru.practicum.event.StateAction;
 import ru.practicum.user.dto.UserShortDto;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 

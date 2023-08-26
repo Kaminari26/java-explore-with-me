@@ -7,6 +7,7 @@ public class CategoryMapper {
     public static Category toDtoCategory(CategoryDto categoryDto) {
         return new Category(null, categoryDto.getName());
     }
+
     public static CategoryDto toDtoCategory(Category category) {
         return new CategoryDto(category.getName());
     }

@@ -11,8 +11,8 @@ import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.service.IEventService;
 import ru.practicum.requests.dto.EventParticipationRequestStatusUpdateRequestDto;
 import ru.practicum.requests.dto.EventParticipationRequestStatusUpdateResponseDto;
-import ru.practicum.requests.service.IParticipationRequestService;
 import ru.practicum.requests.dto.ParticipationRequestDto;
+import ru.practicum.requests.service.IParticipationRequestService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -38,10 +38,11 @@ public class EventPrivateController {
         if (size <= 0 || from < 0) {
             throw new IllegalReceiveException("Неверно указан параметр");
         }
-        List<EventFullDto> eventFullDtos = eventService.getEventByUserId(userId,from,size);
+        List<EventFullDto> eventFullDtos = eventService.getEventByUserId(userId, from, size);
         log.info("Отправлен ответ: {}", eventFullDtos);
         return eventFullDtos;
     }
+
     @PostMapping("/events")
     @ResponseStatus(value = HttpStatus.CREATED)
     public EventFullDto createNewEvent(@PathVariable Long userId, @Valid @RequestBody NewEventDto newEventDto) {
@@ -50,12 +51,14 @@ public class EventPrivateController {
         log.info("Отправлен ответ: {}", event);
         return event;
     }
+
     @GetMapping("/events/{eventId}")
     public EventFullDto getEventByIdByInitiator(@PathVariable("userId") Long userId, @PathVariable("eventId") Long eventId) {
         log.info("Пришел запрос /users/{userId}/events/{eventId}  userId: {}, с eventId: {}", userId, eventId);
-      return eventService.getEventByIdByInitiator(eventId, userId);
+        return eventService.getEventByIdByInitiator(eventId, userId);
 
     }
+
     @GetMapping("/events/{eventId}/requests")
     @ResponseStatus(HttpStatus.OK)
     public List<ParticipationRequestDto> getAllUserEventRequests(@PathVariable("userId") Long userId, @PathVariable("eventId") Long eventId) {
@@ -81,7 +84,7 @@ public class EventPrivateController {
     ) {
         log.info("Пришел запрос Patch /users/{userId}/{userId}/events/{eventId}/requests eventId: {}, для userId: {}", eventId, userId);
         EventParticipationRequestStatusUpdateResponseDto eventParticipationRequestStatusUpdateResponseDto = participationRequestService.updateParticipationRequestsStatus(updater, eventId, userId);
-        log.info("Отправлен ответ: {}", eventParticipationRequestStatusUpdateResponseDto) ;
+        log.info("Отправлен ответ: {}", eventParticipationRequestStatusUpdateResponseDto);
         return eventParticipationRequestStatusUpdateResponseDto;
     }
 }

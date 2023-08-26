@@ -5,12 +5,10 @@ import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.dto.EventShortDto;
-import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CompilationMapper {
     public static Compilation toDto(NewCompilationDto newCompilationDto) {
@@ -20,6 +18,7 @@ public class CompilationMapper {
                 pinned(newCompilationDto.isPinned()).
                 build();
     }
+
     public static CompilationDto toDto(Compilation compilation, List<EventShortDto> events) {
         return CompilationDto.builder().
                 id(compilation.getId()).title(compilation.getTitle()).
@@ -27,11 +26,12 @@ public class CompilationMapper {
                 pinned(compilation.getPinned()).
                 build();
     }
+
     public static void toDto(UpdateCompilationRequest updateCompilationRequest, Compilation compilation, Set<Event> events) {
-        if (updateCompilationRequest.getTitle()!= null) {
+        if (updateCompilationRequest.getTitle() != null) {
             compilation.setTitle(updateCompilationRequest.getTitle());
         }
-        if (events!= null){
+        if (events != null) {
             compilation.setEvents(events);
         }
         compilation.setPinned(updateCompilationRequest.getPinned());

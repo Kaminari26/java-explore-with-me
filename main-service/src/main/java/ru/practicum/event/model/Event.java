@@ -53,7 +53,7 @@ public class Event {
     @NotNull
     private State state;
     @NotBlank
-    @Size(max = 120,min = 3)
+    @Size(max = 120, min = 3)
     private String title;
 
 }

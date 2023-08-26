@@ -1,6 +1,9 @@
 package ru.practicum.event.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.ToString;
 
 @AllArgsConstructor
 @Data

@@ -13,6 +13,7 @@ import java.util.List;
 @RequestMapping("/compilations")
 public class CompilationsPublicController {
     private final ICompilationsService compilationsService;
+
     public CompilationsPublicController(ICompilationsService compilationsService) {
         this.compilationsService = compilationsService;
     }
@@ -24,6 +25,7 @@ public class CompilationsPublicController {
         log.info("Отправлен ответ " + compilationDto);
         return compilationDto;
     }
+
     @GetMapping
     public List<CompilationDto> getBookingByPinned(@RequestParam(defaultValue = "false") Boolean pinned,
                                                    @RequestParam(value = "from", defaultValue = "0", required = false) Integer from,

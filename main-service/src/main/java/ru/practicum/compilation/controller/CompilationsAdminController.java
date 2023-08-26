@@ -16,7 +16,7 @@ public class CompilationsAdminController {
     private final ICompilationsService compilationsService;
 
     @Autowired
-    public CompilationsAdminController(ICompilationsService compilationsService){
+    public CompilationsAdminController(ICompilationsService compilationsService) {
         this.compilationsService = compilationsService;
     }
 
@@ -38,7 +38,7 @@ public class CompilationsAdminController {
 
     @PatchMapping("/{compId}")
     public CompilationDto updateItem(@PathVariable Long compId,
-            @RequestBody UpdateCompilationRequest updateCompilationRequest) {
+                                     @RequestBody UpdateCompilationRequest updateCompilationRequest) {
         log.info("Обновление подборки с id: {} dto: {}", compId, updateCompilationRequest);
         CompilationDto compilationDto = compilationsService.updateCompilation(compId, updateCompilationRequest);
         log.info("Обновленный предмет " + compilationDto);

@@ -1,12 +1,12 @@
 package ru.practicum.compilation.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.event.model.Event;
 
-import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
