@@ -382,7 +382,7 @@ public class EventService implements IEventService {
         LocalDateTime eventDate = updateEventDto.getEventDate();
         LocalDateTime timeCriteria = LocalDateTime.now().plusHours(2L);
         if (eventDate != null && eventDate.isBefore(timeCriteria)) {
-            throw new DataConflictException("неверно указано время");
+            throw new InvalidStatusException("неверно указано время");
         }
         Event event = eventRepository.findById(eventId).orElseThrow(
                 () -> new EntityNotFoundException("Не найдено событие")
@@ -402,12 +402,14 @@ public class EventService implements IEventService {
         if (!Objects.equals(initiator.getId(), userId)) {
             throw new DataConflictException("Нужно быть автором события");
         }
-//        if (event.getState() == State.PUBLISHED) {
-//            throw new EntityNotFoundException("Неверный статус события");
-//        }
+
         if (eventDate != null && eventDate.isBefore(timeCriteria)) {
             throw new DataConflictException("Неверно указано время");
         }
+        if (event.getState() == State.PUBLISHED) {//??
+            throw new DataConflictException("Неверный статус события");
+        }
+
         State newState = event.getState();
         StateAction action = updateEventDto.getStateAction();
         if (action != null) {
