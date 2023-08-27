@@ -29,7 +29,7 @@ public class StatService implements IStatService {
 
     @Override
     public List<HitDto> getHit(Timestamp start, Timestamp end, List<String> uris, Boolean unique) {
-        if (start.before(end)) {
+        if (start.after(end)) {
             throw new IllegalArgumentException("Неверно выбран период");
         }
         if (unique == null) {
