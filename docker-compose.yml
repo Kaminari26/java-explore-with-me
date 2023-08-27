@@ -12,7 +12,7 @@ services:
       - spring.datasource.url=jdbc:postgresql://statistics-db:5432/ewmstats
       - spring.datasource.username=test
       - spring.datasource.password=test
-      - STAT_SERVICE_URL=http://stat-service:9090
+      - STATS_SERVER_URL=http://stats-server:9090
 
 
   statistics-db:
@@ -31,5 +31,21 @@ services:
     container_name: main-service
     ports:
       - "8080:8080"
+    depends_on:
+      - ewm-db
+      - stats-server
+    environment:
+      - spring.datasource.url=jdbc:postgresql://ewm-db:5432/ewmmain
+      - spring.datasource.username=test
+      - spring.datasource.password=test
+      - STATS_SERVER_URL=http://stats-server:9090
 
-
+  ewm-db:
+    image: postgres:15.3-alpine3.18
+    container_name: ewm-db
+    ports:
+      - "6543:5432"
+    environment:
+      - POSTGRES_DB=ewmmain
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
