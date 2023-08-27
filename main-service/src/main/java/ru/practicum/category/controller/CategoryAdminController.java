@@ -24,7 +24,7 @@ public class CategoryAdminController {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public Category createNewCategory(@Valid @RequestBody CategoryDto categoryDto) {
-        log.info("Пришел запрос Post Category CategoryDto: {}", categoryDto);
+        log.info("Пришел запрос  Post Category CategoryDto: {}", categoryDto);
         Category category = categoryService.createNewCategory(categoryDto);
         log.info("Отправлен ответ: {}", category);
         return category;
