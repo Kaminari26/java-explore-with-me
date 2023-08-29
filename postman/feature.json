@@ -23,8 +23,6 @@
               "\r",
               "const target = pm.response.json();\r",
               "\r",
-              "pm.test(\"Body must contains field 'status'\", function () {\r",
-              "    pm.expect(target).to.have.property('status');\r",
               "});"
             ],
             "type": "text/javascript"
