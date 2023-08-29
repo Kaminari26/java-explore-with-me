@@ -41,9 +41,9 @@ import static ru.practicum.UtilityClass.formatTimeToString;
 @Service
 @Transactional(readOnly = true)
 public class EventService implements IEventService {
-    private final StatsClient statClient;
     private static final String APP = "ewm-main-service";
     private static final String LOWER_DATE = "1970-01-01 00:00:00";
+    private final StatsClient statClient;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;

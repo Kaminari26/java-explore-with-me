@@ -20,12 +20,13 @@ public class CommentController {
     public CommentController(ICommentService commentService) {
         this.commentService = commentService;
     }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CommentResponseDto addComment(@PathVariable Long userId,
                                          @RequestParam Long eventId,
                                          @Valid @RequestBody NewCommentDto commentDto) {
-        log.info("Пришел запрос Post /users/{userId}/comments userId: {}, eventId: {}, commentDto: {}.",userId,eventId,commentDto);
+        log.info("Пришел запрос Post /users/{userId}/comments userId: {}, eventId: {}, commentDto: {}.", userId, eventId, commentDto);
         CommentResponseDto commentResponseDto = commentService.addComment(userId, eventId, commentDto);
         log.info("Отправлен ответ:{}.", commentResponseDto);
         return commentResponseDto;
@@ -35,7 +36,7 @@ public class CommentController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCommentById(@PathVariable Long userId,
                                   @PathVariable Long commentId) {
-        log.info("Пришел запрос Delete /users/{userId}/comments/{commentId} userId: {}, commentId: {}.",userId,commentId);
+        log.info("Пришел запрос Delete /users/{userId}/comments/{commentId} userId: {}, commentId: {}.", userId, commentId);
         commentService.deleteCommentById(commentId, userId);
         log.info("Коммент удален");
     }
@@ -45,7 +46,7 @@ public class CommentController {
     public CommentResponseDto updateComment(@PathVariable Long userId,
                                             @PathVariable Long commentId,
                                             @Valid @RequestBody NewCommentDto commentDto) {
-        log.info("Пришел запрос Patch /users/{userId}/comments/{commentId} userId: {}, commentId: {}, commentDto: {}.",userId,commentId,commentDto);
+        log.info("Пришел запрос Patch /users/{userId}/comments/{commentId} userId: {}, commentId: {}, commentDto: {}.", userId, commentId, commentDto);
         CommentResponseDto commentResponseDto = commentService.updateComment(commentId, userId, commentDto);
         log.info("Отправлен ответ:{}.", commentResponseDto);
         return commentResponseDto;

@@ -17,11 +17,10 @@ import java.util.List;
 @Service
 public class StatsClient {
 
-    @Value("${stats-server.url}")
-    private String absoluteUrl;
-
     //private static final String ABSOLUTE_URL = "http://localhost:9090/";
     private final RestTemplate restTemplate = new RestTemplate();
+    @Value("${stats-server.url}")
+    private String absoluteUrl;
     private final WebClient webClient = WebClient.builder()
             .baseUrl(absoluteUrl)
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

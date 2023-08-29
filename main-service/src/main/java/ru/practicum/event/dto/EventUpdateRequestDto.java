@@ -16,13 +16,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class EventUpdateRequestDto {
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    LocalDateTime eventDate;
     private String annotation;
     private Long category;
     private String description;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
-    LocalDateTime eventDate;
-
     private Long initiator;
     private LocationDto location;
     private Boolean paid;
