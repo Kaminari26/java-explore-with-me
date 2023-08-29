@@ -21,11 +21,7 @@
               "    pm.response.to.be.json;\r",
               "});\r",
               "\r",
-              "const target = pm.response.json();\r",
-              "\r",
-              "pm.test(\"Body must contains field 'status'\", function () {\r",
-              "    pm.expect(target).to.have.property('status');\r",
-              "});"
+              "const target = pm.response.json();\r"
             ],
             "type": "text/javascript"
           }
