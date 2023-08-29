@@ -93,7 +93,7 @@ public class CommentService implements ICommentService {
         if (StringUtils.hasLength(newText)) {
             comment.setText(newText);
         }
-        return CommentMapper.toDto(comment);
+        return CommentMapper.toDto(commentRepository.save(comment));
     }
 
     @Transactional
