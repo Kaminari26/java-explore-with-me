@@ -96,7 +96,7 @@ public class CommentService implements ICommentService {
         return CommentMapper.toDto(comment);
     }
 
-    @Transactional()
+    @Transactional
     public List<CommentResponseDto> getAllCommentsByEventId(Long eventId, Integer from, Integer size) {
         eventRepository.findById(eventId).orElseThrow(() -> new UserNotFoundException("Событие не найдено")
         );
@@ -107,7 +107,7 @@ public class CommentService implements ICommentService {
         return comments.stream().map(CommentMapper::toDto).collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<CommentResponseDto> getLast10CommentsByEventId(Long eventId) {
         eventRepository.findById(eventId).orElseThrow(() -> new UserNotFoundException("Событие не найдено")
         );
