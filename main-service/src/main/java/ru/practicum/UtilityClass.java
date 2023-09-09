@@ -23,18 +23,20 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UtilityClass {
+    private static final String START = "1970-01-01 00:00:00";
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final ParticipationRequestRepository requestRepository;
     private final StatsClient statClient;
 
     @Autowired
-    public UtilityClass(ParticipationRequestRepository requestRepository,StatsClient statClient) {
+    public UtilityClass(ParticipationRequestRepository requestRepository, StatsClient statClient) {
         this.requestRepository = requestRepository;
         this.statClient = statClient;
     }
 
-    private static final String START = "1970-01-01 00:00:00";
-
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static String formatTimeToString(LocalDateTime time) {
+        return time.format(formatter);
+    }
 
     public List<EventShortDto> makeEventShortDto(Collection<Event> events) {
         Map<String, Long> viewStatsMap = toViewStats(events);
@@ -85,9 +87,5 @@ public class UtilityClass {
                 requestRepository.countConfirmedRequests(eventsIds, RequestStatus.CONFIRMED);
         return confirmedDtos.stream()
                 .collect(Collectors.toMap(ConfirmedEventDto::getEventId, ConfirmedEventDto::getCount));
-    }
-
-    public static String formatTimeToString(LocalDateTime time) {
-        return time.format(formatter);
     }
 }
